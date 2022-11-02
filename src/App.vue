@@ -1,13 +1,16 @@
 <template>
   <div class="shop">
     <div class="list-book">
-      <Book @add-to-cart="add_book"   v-for="book in arrBook"  :imageBook="book.image" :nameBook="book.name" :nameAuthor="book.author"
+      <Book @add-to-cart="addBook"   v-for="book in arrBook"  :imageBook="book.image" :nameBook="book.name" :nameAuthor="book.author"
         :price="book.price"  />
     </div>
 
+    <!-- <div class="list-post">
+      <Post v-for="post in arrPost" :titlePost="post.title" :description="post.description" />
+    </div> -->
+
     <div class="cart">
-      {{bookBought}}
-      <div v-for="book in bookBought" class="name">{{ book.quantity }}</div>
+      <div v-for="book in bookBought" class="name">{{ book.name }}</div>
     </div>
   </div>
 </template>
@@ -17,19 +20,32 @@
 
 import { ref, Ref } from 'vue';
 import Book from './components/Book.vue'
+import Post from './components/Post.vue'
 import IBook from './model/IBook';
+import IPost from './model/IPost';
 
 const bookBought: Ref<IBook[]> = ref([]);
-const nameBook="";
-const add_book = function (book: IBook) {
-  //cho mảng kia thành rỗng
-  bookBought.value=[];
-console.log(book)
- bookBought.value.push(book) 
- 
-
-  // nameBook=book.name
+const addBook = function (book: IBook) {
+  bookBought.value.push(book)
+  console.log(bookBought.value);
 }
+
+const arrPost: IPost[] = [{
+  title: "Sách 1",
+  description: "Mô tả 1",
+},
+{
+  title: "Sách 2",
+  description: "Mô tả 2"
+}, {
+  title: "Sách 3",
+  description: "Mô tả 3"
+},{
+  title: "Sách 4",
+  description: "Mô tả 4"
+}];
+
+
 const arrBook: IBook[] = [{
   image: "https://images.thuvienpdf.com/w0iwZHo1xx.webp",
   name: "Sách quý 1",
@@ -84,5 +100,18 @@ const arrBook: IBook[] = [{
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+}
+
+.list-post {
+  width: 750px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.list-post .detail-post {
+  width: 200px;
+  border: 1px solid gray;
+  margin-bottom: 40px;
 }
 </style>
