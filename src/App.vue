@@ -1,8 +1,7 @@
 <template>
   <div class="shop">
     <div class="list-book">
-      <Book @add-to-cart="addBook"   v-for="book in arrBook"  :imageBook="book.image" :nameBook="book.name" :nameAuthor="book.author"
-        :price="book.price"  />
+      <Book @add-to-cart="addBook"  v-for="book in arrBook" :book="book"  />
     </div>
 
     <!-- <div class="list-post">

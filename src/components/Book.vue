@@ -1,15 +1,15 @@
 <template >
     <div class="book">
         <div class="thumb">
-            <img :src="imageBook" alt="" />
+            <img :src="book.image" alt="" />
         </div>
         <div class="more-infor">
-            <div class="title">{{ demo }}</div>
-            <div class="title">{{ nameBook }}</div>
-            <div class="author">{{ nameAuthor }}</div>
-            <div class="price">{{ price }} VNĐ</div>
+            <!-- <div class="title">{{ demo }}</div> -->
+            <div class="title">{{ book.name }}</div>
+            <div class="author">{{ book.author }}</div>
+            <div class="price">{{ book.price }} VNĐ</div>
             <div class="price">Bản quyền</div>
-            <BaseButton @click="handleClick()">Mua ngay</BaseButton>
+            <BaseButton @click="handleClick(book)">Mua ngay</BaseButton>
             <!-- Số lượng : <BaseInput></BaseInput> -->
         </div>
     </div>
@@ -19,33 +19,17 @@ import { Ref, ref } from 'vue';
 import IBook from '../model/IBook';
 import BaseInput from './base/BaseInput.vue';
 
-let demo = ref("Linh JS");
-
 // Định nghĩa emit
 const emit = defineEmits(['add-to-cart'])
 
 let quantity: Ref<string> = ref("");
 
 interface IParamsProps {
-    nameBook: string,
-    nameAuthor: string,
-    price: string,
-    imageBook: string,
-
-}
-
-const changeText = function () {
-    demo.value = "Quân JS";
+   book:IBook;
 }
 
 // Định nghĩa Props
-const props = withDefaults(defineProps<IParamsProps>(), {
-
-    nameBook: "Không tên",
-    nameAuthor: "Không tên",
-    price: "0",
-    imageBook: "https://cdn-icons-png.flaticon.com/512/5115/5115607.png"
-})
+const props = defineProps<IParamsProps>();
 /**
  * Xử lý sự click
  * @param event 
