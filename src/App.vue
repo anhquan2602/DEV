@@ -1,7 +1,7 @@
 <template>
   <div class="shop">
     <div class="list-book">
-      <Book @add-to-cart="addBook"  v-for="book in arrBook" :book="book"  />
+      <Book @add-to-cart="addBook" v-for="book in arrBook" :book="book" />
     </div>
 
     <!-- <div class="list-post">
@@ -9,7 +9,27 @@
     </div> -->
 
     <div class="cart">
-      <div v-for="book in bookBought" class="name">{{ book.name }}</div>
+      <table class="list-bought">
+        <tr>
+          <td>STT</td>
+          <td>Sản phẩm</td>
+          <td>Số lượng</td>
+          <td>Đơn giá</td>
+          <td>Thành tiền</td>
+        </tr>
+        <tr v-for="(book, index) in bookBought" >
+          <td>{{index + 1}}</td>
+          <td>{{book.name}}</td>
+          <td>{{book.quantity}}</td>
+          <td>{{book.price}}</td>
+          <td>{{(book.quantity || 0 )* book.price}}</td>
+        </tr>
+        <tr>
+          <td>Tổng tiền</td>
+          <td colspan="4">{{sum()}}</td>
+        </tr>
+      </table>
+
     </div>
   </div>
 </template>
@@ -23,10 +43,22 @@ import Post from './components/Post.vue'
 import IBook from './model/IBook';
 import IPost from './model/IPost';
 
-const bookBought: Ref<IBook[]> = ref([]);
+const bookBought: Ref<IBook[]> = ref([
+  
+]);
 const addBook = function (book: IBook) {
   bookBought.value.push(book)
-  console.log(bookBought.value);
+  if(addBook) {
+
+  }
+}
+
+const sum = function() {
+  let total = 0;
+  bookBought.value.forEach(item => {
+    total += (item.quantity || 0) * item.price;
+  })
+  return total;
 }
 
 const arrPost: IPost[] = [{
@@ -39,27 +71,30 @@ const arrPost: IPost[] = [{
 }, {
   title: "Sách 3",
   description: "Mô tả 3"
-},{
+}, {
   title: "Sách 4",
   description: "Mô tả 4"
 }];
 
 
 const arrBook: IBook[] = [{
+  id: 1,
   image: "https://images.thuvienpdf.com/w0iwZHo1xx.webp",
   name: "Sách quý 1",
   author: "Nguyễn Anh Quân",
-  price: "200.000"
+  price: 200000
 }, {
+  id: 2,
   image: "https://pi.edu.vn/upload/file_manager/T%E1%BA%A1p%20ch%C3%AD%20pi%20s%E1%BB%91%2012/12/0001%20(2).jpg",
   name: "Sách quý 2",
   author: "Nguyễn Anh Thắng",
-  price: "300.000"
+  price: 200000
 }, {
+  id: 3,
   image: "https://bizweb.dktcdn.net/100/112/377/products/c057-tc-pi.jpg?v=1586407303857",
   name: "Sách quý 3",
   author: "Nguyễn Anh Hảo",
-  price: "600.000"
+  price: 200000
 }];
 
 
@@ -71,12 +106,25 @@ const arrBook: IBook[] = [{
 }
 
 .cart {
-  width: 100px;
+  width: 500px;
   border-left: 1px solid white;
+  padding: 0 20px;
+}
+
+table.list-bought {
+  width: 100%;
+  border: 1px solid gray;
+  border-collapse: collapse;
+}
+
+table.list-bought,
+table.list-bought tr,
+table.list-bought td {
+  border: 1px solid gray;
 }
 
 .list-book {
-  width: 80%;
+  width: 70%;
   padding: 30px;
 }
 
