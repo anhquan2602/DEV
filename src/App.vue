@@ -11,49 +11,105 @@
     <div class="cart">
       <table class="list-bought">
         <tr>
+          <td>Mã sản phẩm</td>
           <td>STT</td>
           <td>Sản phẩm</td>
+          <td>Màu sắc</td>
           <td>Số lượng</td>
           <td>Đơn giá</td>
           <td>Thành tiền</td>
+          <td>Chức năng</td>
         </tr>
-        <tr v-for="(book, index) in bookBought" >
-          <td>{{index + 1}}</td>
-          <td>{{book.name}}</td>
-          <td>{{book.quantity}}</td>
-          <td>{{book.price}}</td>
-          <td>{{(book.quantity || 0 )* book.price}}</td>
+        <tr v-for="(book, index) in bookBought">
+          <td>{{ book.id }}</td>
+          <td>{{ index + 1 }}</td>
+          <td>{{ book.name }}</td>
+          <td v-if="book.color == 1">Đỏ</td>
+          <td v-if="book.color == 2">Vàng</td>
+          <td v-if="book.color == 3">Xanh</td>
+          <td>{{ book.quantity }}</td>
+          <td>{{ book.price.toLocaleString() }}</td>
+          <td>{{ ((book.quantity || 0) * (book.price)).toLocaleString() }}</td>
+          <td><button @click="clearData(book)">Xóa</button></td>
         </tr>
         <tr>
           <td>Tổng tiền</td>
-          <td colspan="4">{{sum()}}</td>
+          <td colspan="4">{{ sum().toLocaleString() }}</td>
         </tr>
       </table>
 
     </div>
   </div>
 </template>
-
-
 <script setup lang="ts">
 
 import { ref, Ref } from 'vue';
 import Book from './components/Book.vue'
-import Post from './components/Post.vue'
 import IBook from './model/IBook';
 import IPost from './model/IPost';
 
-const bookBought: Ref<IBook[]> = ref([
-  
-]);
-const addBook = function (book: IBook) {
-  bookBought.value.push(book)
-  if(addBook) {
+const bookBought: Ref<IBook[]> = ref([]);
+// Xử lí nút bấm mua
 
-  }
+const initData = function () {
+  bindingDataBoughtBook();
 }
 
-const sum = function() {
+
+
+// Xử phần nút mua
+const addBook = function (book: IBook) {
+  if (book) {
+
+    const bookFind = bookBought.value.find((item) => {
+      return item.id == book.id && item.color == book.color;
+    })
+    if (bookFind) {
+      bookFind.quantity = Number(bookFind.quantity || 0) + Number(book.quantity || 0);
+    }
+    else {
+      bookBought.value.push(book);
+    }
+  }
+  saveBook(bookBought.value);
+  // Lưu lại vào trong Local Storage
+}
+
+
+
+// xử lý nút xóa
+const clearData = function (book:IBook) {
+  const bookNew = bookBought.value.filter((item) => {
+    return item.id != book.id;
+  })
+  if (bookNew) {
+    const newData = JSON.stringify(bookNew);
+    if (newData) {
+      localStorage.setItem("book_bought", newData);
+    }
+  }
+  
+}
+/**
+ * Save Bought Book
+ * @param bookBought 
+ */
+const saveBook = function (bookBought: IBook[]) {
+  localStorage.setItem("book_bought", JSON.stringify(bookBought));
+}
+/**
+ * Xử lý binding dữ liệu
+ */
+const bindingDataBoughtBook = function () {
+  const bookString = localStorage.getItem("book_bought");
+
+  if (bookString && bookString.length) {
+    bookBought.value = JSON.parse(bookString);
+  }
+
+}
+
+const sum = function () {
   let total = 0;
   bookBought.value.forEach(item => {
     total += (item.quantity || 0) * item.price;
@@ -97,6 +153,8 @@ const arrBook: IBook[] = [{
   price: 200000
 }];
 
+
+initData();
 
 </script>
 

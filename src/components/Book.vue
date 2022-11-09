@@ -8,9 +8,20 @@
             <div class="title">{{ book.name }}</div>
             <div class="author">{{ book.author }}</div>
             <div class="price">{{ book.price }} VNĐ</div>
-            <div class="price">Bản quyền</div>
+            <div>Bản quyền</div>
             Số lượng : <BaseInput v-model="textQuan"></BaseInput>
             <br>
+
+            <select v-model="selectValue">
+                <option value="1">Đỏ</option>
+                <option value="2">Vàng</option>
+                <option value="3">Xanh</option>
+            </select>
+
+           <br>
+           <br>
+           <br>
+
             <BaseButton @click="handleClick(book)">Mua ngay</BaseButton>
         </div>
     </div>
@@ -19,14 +30,11 @@
 import { Ref, ref } from 'vue';
 import IBook from '../model/IBook';
 import BaseInput from './base/BaseInput.vue';
-
-let textQuan = ref("");
-let age = ref("");
+let selectValue = ref(1)
+let textQuan = ref(1);
 
 // Định nghĩa emit
 const emit = defineEmits(['add-to-cart'])
-
-let quantity: Ref<string> = ref("");
 
 interface IParamsProps {
    book:IBook;
@@ -39,13 +47,11 @@ const props = defineProps<IParamsProps>();
  * @param event 
  */
 const handleClick = function (book: IBook) {
-    //đc r
-    emit("add-to-cart", book);
+    book.color = selectValue.value;
+    book.quantity = textQuan.value;
+    emit("add-to-cart", JSON.parse(JSON.stringify(book)) as IBook);
+    textQuan.value = 1;
 }
-const getValue = function(quan: string){
-    console.log(quan);
-}
-
 
 
 </script>
