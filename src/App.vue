@@ -80,7 +80,7 @@ const addBook = function (book: IBook) {
 // xử lý nút xóa
 const clearData = function (book:IBook) {
   const bookNew = bookBought.value.filter((item) => {
-    return item.id != book.id;
+    return (item.id == book.id && item.color != book.color) || (item.id != book.id && item.color == book.color);
   })
   if (bookNew) {
     const newData = JSON.stringify(bookNew);
@@ -88,13 +88,14 @@ const clearData = function (book:IBook) {
       localStorage.setItem("book_bought", newData);
     }
   }
-  
+  window.location.reload();
 }
 /**
  * Save Bought Book
  * @param bookBought 
- */
+ */ 
 const saveBook = function (bookBought: IBook[]) {
+  debugger
   localStorage.setItem("book_bought", JSON.stringify(bookBought));
 }
 /**
