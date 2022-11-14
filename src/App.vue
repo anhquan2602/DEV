@@ -7,7 +7,6 @@
     <!-- <div class="list-post">
       <Post v-for="post in arrPost" :titlePost="post.title" :description="post.description" />
     </div> -->
-
     <div class="cart">
       <table class="list-bought">
         <tr>
@@ -28,13 +27,13 @@
           <td v-if="book.color == 2">Vàng</td>
           <td v-if="book.color == 3">Xanh</td>
           <td>{{ book.quantity }}</td>
-          <td>{{ book.price.toLocaleString() }}</td>
-          <td>{{ ((book.quantity || 0) * (book.price)).toLocaleString() }}</td>
+          <td>{{ book.price }}</td>
+          <td>{{ ((book.quantity || 0) * (book.price)) }}</td>
           <td><button @click="clearData(book)">Xóa</button></td>
         </tr>
         <tr>
           <td>Tổng tiền</td>
-          <td colspan="4">{{ sum().toLocaleString() }}</td>
+          <td colspan="4">{{ sum() }}</td>
         </tr>
       </table>
 
@@ -47,15 +46,14 @@ import { ref, Ref } from 'vue';
 import Book from './components/Book.vue'
 import IBook from './model/IBook';
 import IPost from './model/IPost';
+import axios from 'axios';
 
 const bookBought: Ref<IBook[]> = ref([]);
-// Xử lí nút bấm mua
 
 const initData = function () {
   bindingDataBoughtBook();
+
 }
-
-
 
 // Xử phần nút mua
 const addBook = function (book: IBook) {
@@ -64,50 +62,71 @@ const addBook = function (book: IBook) {
     const bookFind = bookBought.value.find((item) => {
       return item.id == book.id && item.color == book.color;
     })
+    // Nếu tìm thấy thì cập nhật
     if (bookFind) {
-      bookFind.quantity = Number(bookFind.quantity || 0) + Number(book.quantity || 0);
+      bookFind.quantity = (bookFind.quantity || 0) + (book.quantity || 0);
+      axios.put(`http://localhost:3000/books/${bookFind.id}`, bookFind)
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
     else {
-      bookBought.value.push(book);
+      axios.post(`http://localhost:3000/books/`, book)
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
   }
-  saveBook(bookBought.value);
+  bindingDataBoughtBook();
   // Lưu lại vào trong Local Storage
 }
 
 
 
 // xử lý nút xóa
-const clearData = function (book:IBook) {
-  const bookNew = bookBought.value.filter((item) => {
-    return (item.id == book.id && item.color != book.color) || (item.id != book.id && item.color == book.color);
-  })
-  if (bookNew) {
-    const newData = JSON.stringify(bookNew);
-    if (newData) {
-      localStorage.setItem("book_bought", newData);
+const clearData = function (book: IBook) {
+  if (book) {
+    const bookNew = bookBought.value.filter((item) => {
+      return (item.id == book.id && item.color != book.color) || (item.id != book.id && item.color == book.color) || (item.id != book.id && item.color != book.color);
+    })
+    if (bookNew) {
+      localStorage.setItem("book_bought", JSON.stringify(bookNew));
     }
+    bindingDataBoughtBook();
   }
-  window.location.reload();
 }
 /**
  * Save Bought Book
  * @param bookBought 
- */ 
-const saveBook = function (bookBought: IBook[]) {
-  debugger
-  localStorage.setItem("book_bought", JSON.stringify(bookBought));
+ */
+const saveBook = function (book: IBook) {
+  axios.post('http://localhost:3000/books', {
+    book
+  })
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });;
 }
 /**
  * Xử lý binding dữ liệu
  */
 const bindingDataBoughtBook = function () {
-  const bookString = localStorage.getItem("book_bought");
-
-  if (bookString && bookString.length) {
-    bookBought.value = JSON.parse(bookString);
-  }
-
+  axios.get('http://localhost:3000/books')
+    .then(function (response) {
+      // handle success
+      if (response && response.data && response.data.length) {
+        bookBought.value = response.data;
+      }
+    });
 }
 
 const sum = function () {
