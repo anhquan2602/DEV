@@ -58,13 +58,12 @@ const initData = function () {
 // Xử phần nút mua
 const addBook = function (book: IBook) {
   if (book) {
-
     const bookFind = bookBought.value.find((item) => {
       return item.id == book.id && item.color == book.color;
     })
     // Nếu tìm thấy thì cập nhật
     if (bookFind) {
-      bookFind.quantity = (bookFind.quantity || 0) + (book.quantity || 0);
+      bookFind.quantity = Number(bookFind.quantity || 0) + Number(book.quantity || 0);
       axios.put(`http://localhost:3000/books/${bookFind.id}`, bookFind)
         .then(function (response) {
           console.log(response);
@@ -87,35 +86,21 @@ const addBook = function (book: IBook) {
   // Lưu lại vào trong Local Storage
 }
 
-
-
 // xử lý nút xóa
 const clearData = function (book: IBook) {
   if (book) {
-    const bookNew = bookBought.value.filter((item) => {
-      return (item.id == book.id && item.color != book.color) || (item.id != book.id && item.color == book.color) || (item.id != book.id && item.color != book.color);
+    axios.delete(`http://localhost:3000/books/${book.id}`, {
     })
-    if (bookNew) {
-      localStorage.setItem("book_bought", JSON.stringify(bookNew));
-    }
-    bindingDataBoughtBook();
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });;
   }
+  bindingDataBoughtBook();
 }
 /**
- * Save Bought Book
- * @param bookBought 
- */
-const saveBook = function (book: IBook) {
-  axios.post('http://localhost:3000/books', {
-    book
-  })
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });;
-}
 /**
  * Xử lý binding dữ liệu
  */
