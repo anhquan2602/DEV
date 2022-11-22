@@ -9,19 +9,15 @@
             <div class="author">{{ book.author }}</div>
             <div class="price">{{ book.price }} VNĐ</div>
             <div>Bản quyền</div>
-            Số lượng : <BaseInput v-model="textQuan"></BaseInput>
-            <br>
+            <!-- Số lượng : <BaseInput v-model="textQuan"></BaseInput>
+            <br> -->
 
-            <select v-model="selectValue">
+            <!-- <select v-model="selectValue">
                 <option value="1">Đỏ</option>
                 <option value="2">Vàng</option>
                 <option value="3">Xanh</option>
-            </select>
-
-           <br>
-           <br>
-           <br>
-
+            </select> -->
+            <br>
             <BaseButton @click="handleClick(book)">Mua ngay</BaseButton>
         </div>
     </div>
@@ -37,7 +33,7 @@ let textQuan = ref(1);
 const emit = defineEmits(['add-to-cart'])
 
 interface IParamsProps {
-   book:IBook;
+    book: IBook;
 }
 
 // Định nghĩa Props
